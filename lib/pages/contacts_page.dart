@@ -1,8 +1,7 @@
-import 'dart:developer';
-
-import 'package:contact_book/widgets/contact_avatar.dart';
-import 'package:contact_book/widgets/rounded_button.dart';
 import 'package:flutter/material.dart';
+
+import '../widgets/contact_avatar.dart';
+import '../widgets/rounded_button.dart';
 
 class ContactsPage extends StatelessWidget {
   const ContactsPage({super.key});
@@ -23,7 +22,6 @@ class ContactsPage extends StatelessWidget {
                 fit: BoxFit.cover,
               ),
             ),
-            SearchField(controller: _controller),
             SliverFixedExtentList(
               delegate: SliverChildBuilderDelegate(
                 childCount: 25,
@@ -47,93 +45,90 @@ class PageHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverToBoxAdapter(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return SliverAppBar(
+      pinned: true,
+      elevation: 0,
+      // stretch: true,
+      // stretchTriggerOffset: 10,
+      // onStretchTrigger: () async {
+      //   log("TRUE");
+      // },
+      backgroundColor: Colors.white,
+      toolbarHeight: 0,
+      expandedHeight: 150,
+      flexibleSpace: FlexibleSpaceBar(
+        titlePadding: EdgeInsets.zero,
+        background: Column(
           children: [
-            ContactAvatar(
-              size: 50,
-              image: userAvatar,
-            ),
-            const Text(
-              "Contacts",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 22,
-              ),
-            ),
-            RoundedButton(
-              color: Colors.blue,
-              icon: const Icon(Icons.edit, color: Colors.white),
-              onTap: () {},
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: HeaderTopPart(userAvatar: userAvatar),
             ),
           ],
         ),
+      ),
+      collapsedHeight: 60,
+      bottom: const PreferredSize(
+        preferredSize: Size.fromHeight(60),
+        child: SearchField(),
       ),
     );
   }
 }
 
 class SearchField extends StatelessWidget {
-  final ScrollController controller;
-  const SearchField({super.key, required this.controller});
+  const SearchField({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return SliverPersistentHeader(
-      pinned: true,
-      delegate: _SliverAppBarDelegate(
-        controller: controller,
-        minHeight: 0,
-        maxHeight: 80,
-        child: Container(
-          margin: const EdgeInsets.all(5),
-          decoration: BoxDecoration(
-            color: Colors.blue,
-            borderRadius: BorderRadius.circular(20),
-          ),
+    return Container(
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
+      width: double.maxFinite,
+      decoration: BoxDecoration(
+        color: Colors.grey.shade300,
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: TextField(
+        decoration: InputDecoration(
+          border: InputBorder.none,
+          hintText: 'Search',
+          hintStyle: TextStyle(color: Colors.grey.shade500),
+          iconColor: Colors.grey.shade400,
+          icon: const Icon(Icons.search, size: 30),
         ),
       ),
     );
   }
 }
 
-class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
-  final ScrollController controller;
-  final double minHeight;
-  final double maxHeight;
-  final Widget child;
-
-  _SliverAppBarDelegate({
-    required this.controller,
-    required this.minHeight,
-    required this.maxHeight,
-    required this.child,
-  });
+class HeaderTopPart extends StatelessWidget {
+  final Image userAvatar;
+  const HeaderTopPart({super.key, required this.userAvatar});
 
   @override
-  double get maxExtent => maxHeight;
-
-  @override
-  double get minExtent => minHeight;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return oldDelegate.maxExtent != maxExtent ||
-        oldDelegate.minExtent != minExtent;
-  }
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    final _scrollable = Scrollable.of(context);
-    log(_scrollable.widget.toString());
-
-    return SizedBox.expand(child: child);
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        ContactAvatar(
+          size: 50,
+          image: userAvatar,
+        ),
+        const Text(
+          "Contacts",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),
+        ),
+        RoundedButton(
+          color: Colors.blue,
+          icon: const Icon(Icons.edit, color: Colors.white),
+          onTap: () {},
+        ),
+      ],
+    );
   }
 }
